@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Pizzeria &middot; Admin</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.4.0/ui-bootstrap-tpls.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script	src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>	
+
+<script type="text/javascript">
+
+$.getJSON('rest/admin/ingredients/all', function(data) {
+	appendIngredients (data);
+});
+
+function appendIngredients (data){
+	$.each(data, function (i, item){
+		
+		if (item.ingredientType == 'MEAT'){
+			$('#meat').append("<tr><td><div  id='ingredient"+ item.ingredientId +"' value='"+ item.ingredientId + "'>" + item.name + "</div></td>" + 
+					  "<td>" + item.price + "</td>"+
+					  "<td><button type='button' class='btn btn-default' onclick='prepareAddUpdateIngredientDialog(\"update\",\"" + item.name + "\",\"" + item.price + "\",\"" + item.ingredientType + "\",\"" + item.ingredientId + "\")'>Update</button>"+
+					  "<button type='button' class='btn btn-default' onclick='prepareRemoveIngredientDialog(\"delete\",\""+ item.name + "\",\"" +  item.ingredientId + "\")'>Delete</button></td></tr>");
+		}
+		else if (item.ingredientType == 'SEAFOOD'){
+			$('#seafood').append("<tr><td><div  id='ingredient"+ item.ingredientId +"'"+ " value='"+ item.ingredientId + "'>" + item.name + "</div></td>" + 
+					  "<td>" + item.price + "</td>"+
+					  "<td><button type='button' class='btn btn-default' onclick='prepareAddUpdateIngredientDialog(\"update\",\"" + item.name + "\",\"" + item.price + "\",\"" + item.ingredientType + "\",\"" + item.ingredientId + "\")'>Update</button>"+
+					  "<button type='button' class='btn btn-default' onclick='prepareRemoveIngredientDialog(\"delete\",\""+ item.name+ "\",\"" +  item.ingredientId + "\")'>Delete</button></td></tr>");
+		}
+		else if (item.ingredientType == 'VEGETABLES'){
+			$('#vegetables').append("<tr><td><div  id='ingredient"+ item.ingredientId +"'"+ " value='"+ item.ingredientId + "'>" + item.name + "</div></td>" + 
+					  "<td>" + item.price + "</td>"+
+					  "<td><button type='button' class='btn btn-default' onclick='prepareAddUpdateIngredientDialog(\"update\",\"" + item.name + "\",\"" + item.price + "\",\"" + item.ingredientType + "\",\"" + item.ingredientId + "\")'>Update</button>"+
+					  "<button type='button' class='btn btn-default' onclick='prepareRemoveIngredientDialog(\"delete\",\""+ item.name+ "\",\"" +  item.ingredientId + "\")'>Delete</button></td></tr>");
+		}
+		else if (item.ingredientType == 'SPICES'){
+			$('#spices').append("<tr><td><div  id='ingredient"+ item.ingredientId +"'"+ " value='"+ item.ingredientId + "'>" + item.name + "</div></td>" + 
+					  "<td>" + item.price + "</td>"+
+					  "<td><button type='button' class='btn btn-default' onclick='prepareAddUpdateIngredientDialog(\"update\",\"" + item.name + "\",\"" + item.price + "\",\"" + item.ingredientType + "\",\"" + item.ingredientId + "\")'>Update</button>"+
+					  "<button type='button' class='btn btn-default' onclick='prepareRemoveIngredientDialog(\"delete\",\""+ item.name +"\",\"" +  item.ingredientId + "\")'>Delete</button></td></tr>");
+		}
+		else{
+			$('#cheese').append("<tr><td><div  id='ingredient"+ item.ingredientId +"'"+ " value='"+ item.ingredientId + "'>" + item.name + "</div></td>" + 
+					  "<td>" + item.price + "</td>"+
+					  "<td><button type='button' class='btn btn-default' onclick='prepareAddUpdateIngredientDialog(\"update\",\"" + item.name + "\",\"" + item.price + "\",\"" + item.ingredientType + "\",\"" + item.ingredientId + "\")'>Update</button>"+
+					  "<button type='button' class='btn btn-default' onclick='prepareRemoveIngredientDialog(\"delete\",\""+ item.name +"\",\"" +  item.ingredientId + "\")'>Delete</button></td></tr>");
+		} 
+	});
+}
+
+function showErrorMessageFor(element, msg){
+	element.parent().parent().addClass('error');
+	element.after('<span class=\"help-inline\">'+ msg +'</span>');
+}
+
+function cleanErrorMessages(elements){
+	var arrayLength = elements.length;
+	element = null;
+	for (var i = 0; i < arrayLength; i++){
+		element = elements[i];
+		element.parent().parent().removeClass('error');
+		element.next('span').remove();
+	}
+}
+
+function prepareAddUpdateIngredientDialog(action, name, price, type, id){
+	$('#ingredient-button').unbind();
+	$('#dialog-add-update-ingredient').modal();
+	
+	$('#input-ingredient-name').val(name);
+	$('#input-ingredient-price').val(price);
+	$('#input-ingredient-type').val(type);
+	
+	
+	$('#dialog-ingredient-title').text(action.substr(0,1).toUpperCase() + action.substr(1) + ' Ingredient');
+	
+	cleanErrorMessages([$('#input-ingredient-name'), $('#input-ingredient-price')]);
+	
+	$('#ingredient-button').click(function(){
+		cleanErrorMessages([$('#input-ingredient-name'), $('#input-ingredient-price')]);
+		
+		//check name length
+		if ($('#input-ingredient-name').val().length < 3){
+    		showErrorMessageFor($('#input-ingredient-name'), 'Name should be longer than 3');
+    		return;
+    	}
+		
+		// check price length and is number
+		if(!$('#input-ingredient-price').val().length > 0 || isNaN($('#input-ingredient-price').val())){
+    		showErrorMessageFor($('#input-ingredient-price'), 'Price should be a number');
+    		return;
+    	}
+		//check type is not null
+		if ($('#input-ingredient-type').val() === null){
+    		showErrorMessageFor($('#input-ingredient-type'), 'Choose option');
+    		return;
+    	}
+		
+		var newIngredient = {name:  $('#input-ingredient-name').val(), price: $('#input-ingredient-price').val(), ingredientType: $('#input-ingredient-type').val(), ingredientId: id};
+		var jsonIngredient = JSON.stringify(newIngredient);
+		 
+    	$(this).attr('disabled','disabled'); 	
+   	  	var request = $.ajax({
+   	     	Content-Type: 'application/json',
+			url : 'rest/admin/ingredients/'+ action,
+			type : 'POST',
+			data : jsonIngredient,
+			dataType : 'json'
+		});
+		request.done(function(msg) {
+		   location.reload();
+		});
+		request.fail(function(jqXHR, textStatus) {
+			$('#ingredient-button').removeAttr('disabled');
+			showErrorMessageFor($('#input-ingredient-name'), '');
+		});
+	});
+}
+
+function prepareRemoveIngredientDialog(action, entityName, id){
+	$('#ingredient-delete-button').unbind();
+	
+	$('#dialog-delete-ingredient').modal();
+	$("#dialog-delete-title").text(action.substr(0,1).toUpperCase()+action.substr(1) + " " + entityName);  
+	
+    $('#ingredient-delete-button').click(function() {
+      	  	var request = $.ajax({
+      	  	headers: { 
+       	        'Accept': 'application/json',
+       	        'Content-Type': 'application/json'
+       	    },
+			url : 'rest/admin/ingredients/' + action + '/' +  id,
+			type : 'GET',
+			data : { ingredientId: id}, 
+			dataType : 'json'
+		});
+		request.done(function(msg) {
+		   location.reload();
+		});
+		request.fail(function(jqXHR, textStatus) {
+		});
+    });
+}
+
+</script>
+	
+</head>
+<body>
+	<nav class="navbar navbar-inverse" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Pizzeria</a>
+		</div>
+
+		<div class="collapse navbar-collapse navbar-ex1-collapse">
+			<!--  <ul class="nav navbar-nav">
+      		<li ><a href="#">Contacts</a></li>
+      		<li><a href="#">Link</a></li>
+         	</ul> -->
+		</div>
+			<!-- /.navbar-collapse -->
+	</nav>
+	
+	<div class="container">
+		<div class="panel-group" id="accordion">
+  			<div class="panel panel-default">
+    			<div class="panel-heading">
+      				<h4 class="panel-title">
+        				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          					Statistics
+        				</a>
+      				</h4>
+    			</div>
+    		<div id="collapseOne" class="panel-collapse collapse in">
+      			<div class="panel-body">
+					Some data
+      			</div>
+    		</div>
+ 		 </div>
+  		 <div class="panel panel-default">
+    		<div class="panel-heading">
+      			<h4 class="panel-title">
+        			<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+          				Ingredients management
+        			</a>
+      			</h4>
+    		</div>
+    		<div class='text-center'>
+    		<div id="collapseTwo" class="panel-collapse collapse">
+      			<div class="panel-body">
+      				<table class="table table-hover" style="table-layout: fixed">
+      					<thead>
+      						<tr> 
+      							<td><strong>Ingredient name</strong></td>
+      							<td><strong>Ingredient price</strong></td>
+      							<td><strong>Ingredient menagement options</strong></td>
+      						</tr>
+      					</thead>
+      					</table>
+      					<table class="table table-hover" id="ingredients-table-meat" style="table-layout: fixed">
+      					<thead class="text-muted">
+      						<tr> 
+      							<td><h5><em>Meat</em></h5></td>
+      							<td></td>
+      							<td></td>
+      						</tr>
+      					</thead>
+      					<tbody id = "meat">
+      						<!--Ingredient data goes here -->
+      					</tbody>
+      				</table>
+      				<table class="table table-hover" id="ingredients-table-spices" style="table-layout: fixed">
+      					<thead class="text-muted">
+      						<tr> 
+      							<td><h5><em>Spices</em></h5></td>
+      							<td></td>
+      							<td></td>
+      						</tr>
+      					</thead>
+      					<tbody id = "spices">
+      						<!--Ingredient data goes here -->
+      					</tbody>
+      				</table>
+      				<table class="table table-hover" id="ingredients-table-cheese" style="table-layout: fixed">
+      					<thead class="text-muted">
+      						<tr> 
+      							<td><h5><em>Cheese</em></h5></td>
+      							<td></td>
+      							<td></td>
+      						</tr>
+      					</thead>
+      					<tbody id = "cheese">
+      						<!--Ingredient data goes here -->
+      					</tbody>
+      				</table>
+      				<table class="table table-hover" id="ingredients-table-seafood" style="table-layout: fixed">
+      					<thead class="text-muted">
+      						<tr> 
+      							<td><h5><em>Seafood</em></h5></td>
+      							<td></td>
+      							<td></td>
+      						</tr>
+      					</thead>
+      					<tbody id = "seafood">
+      						<!--Ingredient data goes here -->
+      					</tbody>
+      				</table>
+         			<table class="table table-hover" id="ingredients-table-vegetables" style="table-layout: fixed">
+      					<thead class="text-muted">
+      						<tr> 
+      							<td><h5><em>Vegetables</em></h5></td>
+      							<td></td>
+      							<td></td>
+      						</tr>
+      					</thead>
+      					<tbody id = "vegetables">
+      						<!--Ingredient data goes here -->
+      					</tbody>
+      				</table> 
+      			</div> 
+      			<div class="panel-footer">
+      				<button type="button" class="btn btn-info" id="add-ingredient-button"  onclick="prepareAddUpdateIngredientDialog('add','','','','')">Add new ingredient</button>
+      			</div>
+    		</div>
+    		</div>
+  		</div>
+  		<div class="panel panel-default">
+    		<div class="panel-heading">
+      			<h4 class="panel-title">
+        			<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+          				Admins management
+        			</a>
+      			</h4>
+    		</div>
+    		<div id="collapseThree" class="panel-collapse collapse">
+      			<div class="panel-body">
+      				Some data
+      			</div>
+    		</div>
+  		</div>
+		</div>
+	</div>
+	
+	<!-- Modal form "Add ingredient" -->
+	<div  id="dialog-add-update-ingredient" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        			<h4 class="modal-title" id="dialog-ingredient-title"></h4>
+      			</div>
+      		<div class="modal-body">
+      
+       			<form   role="form">
+  					<div class="form-group">
+    					<label for="input-ingredient-name">Ingredient name</label>
+      					<input  class="form-control" id="input-ingredient-name">
+  					</div>
+  					<div class="form-group">
+    					<label for="input-ingredient-price">Ingredient price</label>
+      					<input class="form-control" id="input-ingredient-price">
+  					</div>
+  					<div class="form-group">
+    					<label for="input-ingredient-type">Ingredient type</label>
+    					<select class="form-control" id="input-ingredient-type">
+  							<option>MEAT</option>
+  							<option>CHEESE</option>
+  							<option>SPICES</option>
+  							<option>SEAFOOD</option>
+  							<option>VEGETABLES</option>
+						</select>
+  					</div>
+				</form>
+
+      		</div>
+      		<div class="modal-footer">
+        		<button type="submit" class="btn btn-default" id="ingredient-button">Save</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<!-- Modal form "Delete ingredient" -->
+	<div  id="dialog-delete-ingredient" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-dialog">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        			<h4 class="modal-title" id="dialog-delete-title"></h4>
+      			</div>
+      		<div class="modal-body">
+				Are you sure you want to permanently delete this item?
+      		</div>
+      		<div class="modal-footer">
+        		<button type="submit" class="btn btn-default" id="ingredient-delete-button">Delete</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+</body>
+</html>

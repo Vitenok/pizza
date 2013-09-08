@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+	<persistence-unit name="pizza" transaction-type="RESOURCE_LOCAL">
+
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>com.iti.pizza.entity.Admin</class>
+		<class>com.iti.pizza.entity.Pizza</class>
+		<class>com.iti.pizza.entity.Ingredient</class>
+		<class>com.iti.pizza.entity.PizzaOrder</class>
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" /> <!-- HSQLDialect -->
+			
+			<!--
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="true" />
+			-->
+			
+			<property name="javax.persistence.jdbc.driver" value="${jdbc.driverClassName}" />
+			<property name="javax.persistence.jdbc.url" value="${jdbc.url}" />
+			<property name="javax.persistence.jdbc.user" value="${jdbc.username}" />
+			<property name="javax.persistence.jdbc.password" value="${jdbc.password}" />
+			
+			<!-- 
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			-->
+		</properties>
+
+	</persistence-unit>
+</persistence>

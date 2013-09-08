@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html ng-app="PizzaApp" ng-controller="Controller">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Pizzeria &middot; Admin Menagement</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.5.0.js"></script>
+<script	src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+
+<script src="../js/ingredient.js"></script>
+
+	<style  type="text/css">
+		#loading-image {
+			position: fixed;
+			top: 40%;
+			left: 47%;
+		}
+		
+		#inner {
+	  		display: table-cell;
+	  		vertical-align: middle;
+	  		text-align: center;
+		}
+	</style>
+	
+</head>
+<body>
+	<div id="loading">
+		<div id="inner">
+			<img id="loading-image" src="../images/loading.gif" alt="Loading..." />
+		</div>
+	</div>
+		
+	<div id="content"> 
+
+		<div class="navbar navbar-inverse"">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="brand" href="/index.html">Pizzeria</a>
+					<ul class="nav">
+						<li><a href="/admin/admin.html">Manage admins</a></li>
+						<li><a href="/admin/templatesManagement.html">Manage templates</a></li>
+						<li><a href="/admin/ingredientsManagement.html">Manage ingredients</a></li>
+						<li><a href="/admin/tagsManagement.html">Manage tags</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	
+		<div class="container">
+			<div>
+				<h3>Ingredients Menagement</h3>
+				<table class="table table-hover" style="table-layout: fixed">
+					<thead>
+						<tr>
+							<td><strong>Ingredient name</strong></td>
+							<td><strong>Ingredient price</strong></td>
+							<td><strong>Options</strong></td>
+						</tr>
+					</thead>
+				</table>
+				<div ng-repeat="ingredientGroup in ingredientGroups">
+				<table class="table table-hover" style="table-layout: fixed">
+					<thead id="{{ingredientGroup.name}}">
+						<tr>
+							<th class="text-muted"><em>{{ingredientGroup.val}}</em></th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="ingredient in ingredients | filter:{ingredientType:ingredientGroup.name}">
+						<tr>
+							<td>
+								{{ingredient.name}}
+							</td>
+							<td>
+								{{ingredient.price}}
+							</td>
+							<td>
+								<div class="btn-group">
+									<button class="btn" ng-click="openUpdateIngredientDialog(ingredient)">Update</button>
+									<button class="btn" ng-click="openDeleteIngredientDialog(ingredient)">Delete</button>
+								</div>
+							</td>									
+						</tr>
+					</tbody>
+				</table>
+				</div>
+				<button class="btn" ng-click="openAddIngredientDialog()">Add ingredient</button>
+			</div>
+		</div>
+	</div>	
+</body>
+</html>

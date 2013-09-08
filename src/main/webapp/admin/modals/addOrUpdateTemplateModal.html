@@ -1,0 +1,66 @@
+<div class="modal-header">
+	<button type="button" class="close" ng-click="close()"data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3>{{dialogName}}</h3>
+</div>
+<div class="modal-body">
+	<form class="form">
+			<label class="control-label" for="input-pizza-name"><strong>Template name</strong></label>
+ 			<input type="text" id="input-pizza-name" ng-model="template.name"/>
+ 					
+ 			<label class="control-label" for="input-pizza-size"><strong>Pizza sizes</strong></label>
+			<select ng-model="pizzaSize" ng-options="s.name for s in pizzaSizes" ng-change="calculatePrice()"></select>
+				
+			<label class="control-label" for="input-pizza-thicknesses"><strong>Pizza thicknesses</strong></label>
+			<select ng-model="pizzaThicknes" ng-options="t.name for t in pizzaThickneses" class="form-control"></select>
+			
+			<div>
+				<label class="control-label" for="input-tag-name"><strong>Tags</strong></label>
+				<div class="span2" ng-repeat="tag in tags">
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" ng-model="tag.checked"/>{{tag.name}}<br>
+						</label>
+					</div>
+				</div>
+			</div>
+			<br><br><br><br>
+			
+			<div class="well">
+				<label class="control-label" for="input-ingredient-name"><strong>Ingredient's names</strong></label>
+				<div ng-repeat="ingredientGroup in ingredientGroups">
+				<table class="table table-hover"  style="table-layout: fixed">
+					<thead id="{{ingredientGroup.name}}">
+						<tr>
+							<th class="text-muted"><em>{{ingredientGroup.val}}</em></th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="ingredient in ingredients | filter:{ingredientType:ingredientGroup.name}">
+						<tr>
+							<td>
+								{{ingredient.name}}
+							</td>
+							<td>
+								<div class="form-group">
+									Amount: 
+									<label>
+										<select class="span1" ng-model="ingredient.amount" ng-options="a for a in ingredientAmounts" class="form-control" ng-change="calculatePrice()"></select>
+									</label>
+								</div>
+							</td>
+							<td>
+								Price: {{ingredient.price*ingredient.amount}}
+							</td>	
+						</tr>						
+					</tbody>
+	           	</table>
+	           </div>
+		   </div>  
+	</form>
+</div>
+<div class="modal-footer">
+	<div class="pull-left"><strong>Total price: {{totalPrice}}</strong></div>
+	<button type="submit" class="btn" ng-click="close()" >Cancel</button>
+	<button type="submit" class="btn btn-primary" ng-click="doTemplate()" id="save-btn" ng-disabled="isDisabled">Save</button>
+</div>
