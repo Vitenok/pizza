@@ -13,10 +13,14 @@ function Controller($scope, $http) {
 		angular.forEach($scope.ingredients, function(value, key){
 			value.amount=$scope.ingredientAmounts[0];
 		});
+		angular.forEach($scope.templates, function(template){
+			template.class="btn-default";
+		});
 		$scope.pizzaSize = $scope.pizzaSizes[0];
 		$scope.pizzaThicknes = $scope.pizzaThickneses[0];
 		$scope.currentSelectedPizzaIdInCart = 0;
 		$scope.addOrUpdateBtnText="Add To Cart";
+		$scope.currentPrice = 0;
 	};
 	
 	// INGREDIENTS PART
@@ -33,7 +37,6 @@ function Controller($scope, $http) {
 	$('#content').hide();
 	$http.get('rest/client/ingredients/all').success(function(data) {
 		$scope.ingredients = data;
-		$scope.clearSelection();
 	});
 	
 	
@@ -50,6 +53,7 @@ function Controller($scope, $http) {
 	$http.get('rest/client/templates/all').success(function(data) {
 		$scope.templates = data;
 		
+		$scope.clearSelection();
 		$('#loading').fadeOut('slow');
 		$('#content').fadeIn('slow');
 	});
@@ -69,7 +73,7 @@ function Controller($scope, $http) {
 		//get template tags
 		var templateTagsIds = _.pluck(item.tags, 'id');
 		
-		return _.intersection(checkedTagsIds, templateTagsIds).length > 0;
+		return _.intersection(checkedTagsIds, templateTagsIds).length == checkedTagsIds.length;
     };
     
     
@@ -82,6 +86,9 @@ function Controller($scope, $http) {
     	if (_.isUndefined(pizza.isTemplate)){
     		$scope.currentSelectedPizzaIdInCart = pizza.id;
     		$scope.addOrUpdateBtnText="Update Cart";
+    	} else {
+    	// highlightning selected pizzas template
+    		pizza.class="btn-info";
     	}
     	
     	$scope.pizzaThicknes = _.findWhere($scope.pizzaThickneses, {val:pizza.thickness});
@@ -91,6 +98,8 @@ function Controller($scope, $http) {
     		var matchIngredient = _.findWhere($scope.ingredients, {ingredientId : pizzaIngredient.ingredientId});
     		matchIngredient.amount = _.where(pizza.ingredients, {ingredientId : pizzaIngredient.ingredientId}).length;
     	});
+    	
+    	$scope.calculateCurrentPrice();
     };
     
     
@@ -124,7 +133,7 @@ function Controller($scope, $http) {
     $scope.removeFromCart = function(pizza) {
     	$scope.pizzas = _.without($scope.pizzas, pizza);
     	updateCartPrice();
-    	$scope.clearSelection();
+//    	$scope.clearSelection();
     };
     
     $scope.getPizzaTitleInCart = function(pizza) {
@@ -138,7 +147,7 @@ function Controller($scope, $http) {
     function updateCartPrice(){
     	$scope.totalPrice=0;
     	angular.forEach($scope.pizzas, function(value, key){
-    		$scope.totalPrice += _.reduce(_.pluck(value.ingredients, 'price'), function(memo, price){return memo+price;})*_.findWhere($scope.pizzaSizes, {val:value.size}).multiplier;
+    		$scope.totalPrice += _.reduce(_.pluck(value.ingredients, 'price'), function(memo, price){return memo+price;}) * _.findWhere($scope.pizzaSizes, {val:value.size}).multiplier;
     	});
     }
     
@@ -156,6 +165,14 @@ function Controller($scope, $http) {
 		$scope.pizzas=[];
 		$scope.totalPrice = 0;
 		$scope.address="";
+    };
+    
+    $scope.calculateCurrentPrice = function(){
+    	$scope.currentPrice = 0;
+    	angular.forEach($scope.ingredients, function(ingredient){
+    		$scope.currentPrice += ingredient.price * ingredient.amount;
+    	});
+    	$scope.currentPrice = $scope.currentPrice * $scope.pizzaSize.multiplier;
     };
 	
 }

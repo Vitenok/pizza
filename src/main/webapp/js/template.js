@@ -60,11 +60,11 @@ function Controller($scope, $http, $dialog) {
 	$scope.calculateTemplatePrice = function(template){
 		var price = 0;
 		angular.forEach(template.ingredients, function(ingredient){
-			price += ingredient.price;
+			price += ingredient.price*ingredient.amount;
 		});
 		var multiplier = _.findWhere($scope.pizzaSizes, {val:template.size}).multiplier;
 		return price * multiplier;
-	};		
+	};	
 	
 	$scope.openAddTemplateDialog = function(){
 		$scope.templateCommonOpts.templateUrl = "../admin/modals/addOrUpdateTemplateModal.html";
@@ -297,7 +297,7 @@ function UpdateTemplateDialogController($scope, $http, dialog){
     	}));
 		
 		template.isTemplate = true;
-		template.order=null;
+		template.order = null;
 		
 		angular.forEach(template.ingredients, function(ingredient){
     		delete ingredient.amount;
