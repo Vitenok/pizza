@@ -297,7 +297,7 @@ function UpdateTemplateDialogController($scope, $http, dialog){
     	}));
 		
 		template.isTemplate = true;
-		template.order=null;
+		template.order = null;
 		
 		angular.forEach(template.ingredients, function(ingredient){
     		delete ingredient.amount;

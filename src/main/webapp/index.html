@@ -4,10 +4,10 @@
 
 		<link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 		
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		<script	src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
 		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+		<script	src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
  		
 		<script src="js/client.js"></script>
 		
@@ -23,6 +23,10 @@
     			vertical-align: middle;
     			text-align: center;
 			}
+			
+			#templates-well {
+				min-height: 100px;
+			}
 		</style>
     	
 	</head>
@@ -37,7 +41,7 @@
 		
 		<div id="content"> 
 
-<!-- NAVBAR -->			
+	<!-- NAVBAR -->			
 			<nav class="navbar navbar-inverse" role="navigation">
 				<!-- Brand and toggle get grouped for better mobile display -->
 				<div class="navbar-header">
@@ -55,9 +59,12 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-12">
-						<div class="well">
+						<div class="well" id="templates-well">
 							<span ng-repeat="template in templates | filter:filterByTag">
-								<button class="btn btn-default" ng-click="showPizzaIngredients(template)">{{template.name}}</button>
+								<button class="btn" ng-class="template.class" ng-click="showPizzaIngredients(template)">{{template.name}}</button>
+							</span>
+							<span class="pull-right">
+								Current price: {{currentPrice}}
 							</span>
 						</div>
 					</div>
@@ -88,7 +95,7 @@
 						</div>
 						
 						<div class="col-md-3">
-							<select ng-model="pizzaSize" ng-options="s.name for s in pizzaSizes" class="form-control"></select>
+							<select ng-model="pizzaSize" ng-options="s.name for s in pizzaSizes" class="form-control" ng-change="calculateCurrentPrice()"></select>
 						</div>
 						
 						<div class="col-md-3">
@@ -119,7 +126,7 @@
 											<div class="form-group">
 												Amount: 
 												<label>
-													<select ng-model="ingredient.amount" ng-options="a for a in ingredientAmounts" class="form-control"></select>
+													<select ng-model="ingredient.amount" ng-options="a for a in ingredientAmounts" class="form-control" ng-change="calculateCurrentPrice()"></select>
 												</label>
 											</div>
 										</td>

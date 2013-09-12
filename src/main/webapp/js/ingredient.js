@@ -79,7 +79,7 @@ function AddIngredientDialogController($scope, $http, dialog){
 	$scope.dialogName = "Add Ingredient";
 	
 	$scope.doIngredient = function(){
-		$scope.ingredient.ingredientType = $scope.ingredientGroup.name; 
+		$scope.ingredient.ingredientType = $scope.ingredientGroup.name;
 		
 		$http({method: "POST", url: "/rest/admin/ingredients/add", data: $scope.ingredient}).
 		  success(function(data) {
